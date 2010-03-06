@@ -16,12 +16,16 @@ function Game(){
 Game.prototype.setup = function() {
 	console.log('Game#setup');
 	this.canvas = document.getElementById('canvas'); 
-	this.ctx = canvas.getContext('2d');
-	this.width = canvas.width;
-	this.height = canvas.height;
-	this.bindKeys();
-	this.addSprites();
-	this.run();
+	if (this.canvas.getContext){ 
+		this.ctx = canvas.getContext('2d');
+		this.width = canvas.width;
+		this.height = canvas.height;
+		this.bindKeys();
+		this.addSprites();
+		this.run();
+	} else {
+		alert('Canvas element not supported!');
+	};
 };
 
 Game.prototype.bindKeys = function() {
@@ -120,14 +124,6 @@ Tower.prototype.getPosition = function() {
 
 ;(function($) {
 	$(function() {
-		
-		var canvas;
-		var game;
-
-		canvas = document.getElementById('canvas');  
-		if (canvas.getContext){ 
-			game = new Game();
-		};
-
+		game = new Game();
 	});
 })(jQuery);
