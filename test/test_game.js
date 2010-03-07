@@ -1,14 +1,12 @@
 (function($) {
-  // $(function() {
-  with(QUnit) {
-    context('Sammy','apps')
-      .should('return a new application if no arguments passed', function() {
-        var app = new Game();
-        // defined(app, 'route');
+	with(QUnit) {
+		
+		context('Tower Defence','game')
+			.should('return a new game', function() {
+				var app = new Game();
+				// defined(app, 'route');
 				ok(true);
-      })
-      
-     
-    }
-  // });
+			});
+			
+	};
 })(jQuery);

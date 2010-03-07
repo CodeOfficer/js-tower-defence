@@ -1,3 +1,4 @@
+
 function Map(cols, rows){
 	console.log('Map');
 	this.cols = cols; 
@@ -49,11 +50,15 @@ Game.prototype.bindKeys = function() {
 	console.log('Game#bindKeys');
 	var game = this;
 	$(document).bind('keydown', 'a', function(){ game.addSprite(); });
+	$('#add-tower').bind('click', function(){ game.addSprite(); return false; });
 	$(document).bind('keydown', 'up', function(){ game.keyCommand('up'); });
 	$(document).bind('keydown', 'down', function(){ game.keyCommand('down'); });
 	$(document).bind('keydown', 'left', function(){ game.keyCommand('left'); });
 	$(document).bind('keydown', 'right', function(){ game.keyCommand('right'); });
+	$(document).bind('keydown', 'r', function(){ game.run(); });
+	$('#run-game').bind('click', function(){ game.run(); return false; });
 	$(document).bind('keydown', 'p', function(){ game.pause(); });
+	$('#pause-game').bind('click', function(){ game.pause(); return false; });
 	$(document).bind('keydown', 'q', function(){ game.teardown(); });
 };
 

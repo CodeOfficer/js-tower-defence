@@ -3,13 +3,13 @@
 <head>
 	<title>Tower Defence Test Suite</title>
 	<link rel="stylesheet" href="vendor/qunit/qunit.css" type="text/css" media="screen">
+	<link rel="stylesheet" href="../stylesheets/application.css" type="text/css" media="screen">
 	<script type="text/javascript" src="vendor/qunit/qunit.js"></script>
 	<script type="text/javascript" src="../javascripts/jquery-1.4.2.js"></script>
   <script type="text/javascript" src="vendor/qunit-spec.js"></script>
   <script type="text/javascript" src="../javascripts/application.js"></script>
 </head>
 <body>
-
 	<h1 id="qunit-header">Tower Defence Test Suite</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
@@ -17,13 +17,13 @@
 	<ol id="qunit-tests"></ol>
 
 	<!-- Test HTML -->
-	<canvas id="canvas" width="500" height="500"></canvas>
+	<canvas id="canvas" width="400" height="400"></canvas>
 	<ul id="commands">
-		<li><u>P</u>ause</li>
-		<li><u>A</u>dd</li>
+		<li><a id="run-game" href="#" title="Run"><u>R</u>un</a></li>
+		<li><a id="pause-game" href="#" title="Pause"><u>P</u>ause</a></li>
+		<li><a id="add-tower" href="#" title="Add Twoer"><u>A</u>dd Tower</a></li>
 	</ul>
 
   <script type="text/javascript" src="test_game.js"></script>
-
 </body>
 </html>
