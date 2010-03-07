@@ -1,5 +1,5 @@
-function Matrix(cols, rows){
-	console.log('Matrix');
+function Map(cols, rows){
+	console.log('Map');
 	this.cols = cols; 
 	this.rows = rows; 
 	this.data = [];
@@ -9,8 +9,9 @@ function Matrix(cols, rows){
 	return this;
 }
 
-Matrix.prototype.placeSprite = function() {
-	console.log('Matrix#placeSprite');
+Map.prototype.placeSprite = function(x, y, sprite) {
+	console.log('Map#placeSprite');
+	this.data[y][x] = sprite;
 };
 
 // ----------------------------------------------------------------------------
@@ -22,6 +23,7 @@ function Game(){
 	this.width = null;
 	this.height = null;
 	this.sprites = [];
+	this.map = null;
 	this.running = false;
 	this.setup();
 	return this;
@@ -34,9 +36,10 @@ Game.prototype.setup = function() {
 		this.ctx = this.canvas.getContext('2d');
 		this.width = this.canvas.width;
 		this.height = this.canvas.height;
+		this.map = new Map(this.canvas.width/20, this.canvas.height/20);
 		this.bindKeys();
 		this.addSprites();
-		this.run();
+		// this.run();
 	} else {
 		alert('Canvas element not supported!');
 	};
@@ -130,11 +133,10 @@ function Tower(x, y, radius){
 	this.y = y;
 	this.radius = radius;
 	this.color = "rgb(200,0,0)";
+	this.oob = false;
 }
 
 Tower.prototype.update = function() {
-	this.x++;
-	this.y++;
 };
 
 Tower.prototype.draw = function(ctx) {
@@ -151,6 +153,46 @@ Tower.prototype.setPosition = function(x, y) {
 };
 
 Tower.prototype.getPosition = function() {
+	return [this.x, this.y];
+};
+
+// ----------------------------------------------------------------------------
+
+function Enemy(x, y, radius){
+	this.x = x;
+	this.dx = dx;
+	this.y = y;
+	this.dy = dy;
+	this.radius = radius;
+	this.color = "rgb(200,0,0)";
+	this.oob = false;
+}
+
+Enemy.prototype.update = function() {
+	if (this.x > WIDTH || this.x < 0 || this.y > HEIGHT || this.y < 0)
+		this.oob = true;
+	else {
+		this.x += this.dx;
+		this.y += this.dy;
+	}
+	this.x++;
+	this.y++;
+};
+
+Enemy.prototype.draw = function(ctx) {
+	ctx.fillStyle = this.color;  
+	ctx.beginPath();
+	ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true);
+	ctx.closePath();
+	ctx.fill();
+};
+
+Enemy.prototype.setPosition = function(x, y) {
+	this.x = x;
+	this.y = y;
+};
+
+Enemy.prototype.getPosition = function() {
 	return [this.x, this.y];
 };
 
