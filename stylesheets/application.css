@@ -2,8 +2,19 @@ body {
 	text-align: center;
 	background-color: #CCC;
 }
+
 canvas {
 	border: 1px solid black;
 	width: 400px;
 	height: 400px;
+}
+
+#commands {
+	list-style: none;
+	padding: 0;
+}
+
+#commands li {
+	display: inline;
+	margin-right: 10px;
 }

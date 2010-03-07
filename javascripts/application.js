@@ -1,4 +1,4 @@
-// Math.floor(Math.random()*11)
+
 // ----------------------------------------------------------------------------
 
 function Game(){
@@ -59,10 +59,18 @@ Game.prototype.run = function() {
 	function gameLoop(){ 
 		if (game.running) { 
 			game.clear();
+			game.update(); 
 			game.draw(); 
 		};
 	}
 	setInterval(gameLoop, 30);
+};
+
+Game.prototype.update = function() {
+	console.log('Game#update');
+	for (var i=0; i < this.sprites.length; i++) {
+		this.sprites[i].update();
+	};
 };
 
 Game.prototype.draw = function() {
@@ -94,6 +102,15 @@ Game.prototype.teardown = function() {
 
 // ----------------------------------------------------------------------------
 
+function Background(width, height){
+	this.width = width;
+	this.height = height;
+	this.radius = radius;
+	this.color = "rgb(200,0,0)";
+}
+
+// ----------------------------------------------------------------------------
+
 function Tower(x, y, radius){
 	this.x = x;
 	this.y = y;
@@ -101,14 +118,17 @@ function Tower(x, y, radius){
 	this.color = "rgb(200,0,0)";
 }
 
+Tower.prototype.update = function() {
+	this.x++;
+	this.y++;
+};
+
 Tower.prototype.draw = function(ctx) {
 	ctx.fillStyle = this.color;  
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true);
 	ctx.closePath();
 	ctx.fill();
-	this.x++;
-	this.y++;
 };
 
 Tower.prototype.setPosition = function(x, y) {
