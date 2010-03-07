@@ -1,3 +1,17 @@
+function Matrix(cols, rows){
+	console.log('Matrix');
+	this.cols = cols; 
+	this.rows = rows; 
+	this.data = [];
+	for (var row=0; row < this.rows; row++) {
+		this.data[row] = new Array(this.cols);
+	};
+	return this;
+}
+
+Matrix.prototype.placeSprite = function() {
+	console.log('Matrix#placeSprite');
+};
 
 // ----------------------------------------------------------------------------
 
@@ -17,9 +31,9 @@ Game.prototype.setup = function() {
 	console.log('Game#setup');
 	this.canvas = document.getElementById('canvas'); 
 	if (this.canvas.getContext){ 
-		this.ctx = canvas.getContext('2d');
-		this.width = canvas.width;
-		this.height = canvas.height;
+		this.ctx = this.canvas.getContext('2d');
+		this.width = this.canvas.width;
+		this.height = this.canvas.height;
 		this.bindKeys();
 		this.addSprites();
 		this.run();
