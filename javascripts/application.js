@@ -5,6 +5,7 @@ function Player(){
 
 // ----------------------------------------------------------------------------
 // http://dev.opera.com/articles/view/creating-pseudo-3d-games-with-html-5-can-1/
+// http://dev.opera.com/articles/view/3d-games-with-canvas-and-raycasting-part/
 
 var map_data = [
   ['0','0','X','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
