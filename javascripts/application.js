@@ -1,115 +1,166 @@
 
-function Map(cols, rows){
-	console.log('Map');
-	this.cols = cols; 
-	this.rows = rows; 
-	this.data = [];
+function Player(){
+	return this;
+}
+
+// ----------------------------------------------------------------------------
+// http://dev.opera.com/articles/view/creating-pseudo-3d-games-with-html-5-can-1/
+
+var map_data = [
+  ['0','0','X','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+  ['0','0','X','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+  ['0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','X','X','X','X','X','0','0'],
+  ['0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','X','X','X','X','X','X','X','X','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0'],
+  ['0','0','X','0','0','0','0','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0'],
+  ['0','0','X','X','X','X','X','X','0','0','0','0','0','0','0','0','0','0','0','X','0','0'],
+  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','X','0','0'],
+  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','X','0','0']
+];
+
+function Map(width, height, data){
+	this.scale   = 10;
+	this.width   = width; 
+	this.height  = height; 
+	this.cols    = data[0].length; 
+	this.rows    = data.length; 
+	this.terrain = [];
+	this.units   = [];
 	for (var row=0; row < this.rows; row++) {
-		this.data[row] = new Array(this.cols);
+		this.terrain[row] = new Array(this.cols);
+		this.units[row]   = new Array(this.cols);
+		for (var col=0; col < this.cols; col++) {
+			this.terrain[row][col] = data[row][col];
+			this.units[row][col]   = null;
+		};
 	};
 	return this;
 }
 
-Map.prototype.placeSprite = function(x, y, sprite) {
-	console.log('Map#placeSprite');
-	this.data[y][x] = sprite;
+Map.prototype.placeActor = function(x, y, actor) {
+	this.units[x][y] = actor;
+};
+
+Map.prototype.entrance = function() {
+	// return something
+};
+
+Map.prototype.exit = function() {
+	// return something
+};
+
+Map.prototype.draw = function(ctx) {
+	for (var row=0; row < this.rows; row++) {
+		for (var col=0; col < this.cols; col++) {
+			var tile = this.terrain[row][col];
+			if (tile == '0') {
+        ctx.fillStyle = "rgb(0,0,0)";
+        ctx.fillRect(  
+          col * this.scale,
+          row * this.scale,
+          this.scale,
+					this.scale
+	      );
+			};
+		};
+	};
 };
 
 // ----------------------------------------------------------------------------
 
 function Game(){
-	console.log('Game');
-	this.canvas = null; 
-	this.ctx = null;
-	this.width = null;
-	this.height = null;
-	this.sprites = [];
-	this.map = null;
+	this.canvas  = null; 
+	this.ctx     = null;
+	this.width   = null;
+	this.height  = null;
+	this.actors  = [];
+	this.player  = null;
+	this.map     = null;
 	this.running = false;
 	this.setup();
 	return this;
 }
 
 Game.prototype.setup = function() {
-	console.log('Game#setup');
 	this.canvas = document.getElementById('canvas'); 
 	if (this.canvas.getContext){ 
-		this.ctx = this.canvas.getContext('2d');
-		this.width = this.canvas.width;
+		this.ctx    = this.canvas.getContext('2d');
+		this.width  = this.canvas.width;
 		this.height = this.canvas.height;
-		this.map = new Map(this.canvas.width/20, this.canvas.height/20);
+		this.map    = new Map(this.canvas.width, this.canvas.height, map_data);
+		this.player = new Player();
 		this.bindKeys();
-		this.addSprites();
-		// this.run();
+		this.addActors();
 	} else {
 		alert('Canvas element not supported!');
 	};
 };
 
 Game.prototype.bindKeys = function() {
-	console.log('Game#bindKeys');
 	var game = this;
-	$(document).bind('keydown', 'a', function(){ game.addSprite(); });
-	$('#add-tower').bind('click', function(){ game.addSprite(); return false; });
 	$(document).bind('keydown', 'up', function(){ game.keyCommand('up'); });
 	$(document).bind('keydown', 'down', function(){ game.keyCommand('down'); });
 	$(document).bind('keydown', 'left', function(){ game.keyCommand('left'); });
 	$(document).bind('keydown', 'right', function(){ game.keyCommand('right'); });
-	$(document).bind('keydown', 'r', function(){ game.run(); });
-	$('#run-game').bind('click', function(){ game.run(); return false; });
-	$(document).bind('keydown', 'p', function(){ game.pause(); });
-	$('#pause-game').bind('click', function(){ game.pause(); return false; });
+	$(document).bind('keydown', 'a', function(){ game.addActor(); });
 	$(document).bind('keydown', 'q', function(){ game.teardown(); });
+	$(document).bind('keydown', 'p', function(){ game.pause(); });
+	$(document).bind('keydown', 'r', function(){ game.run(); });
+	$('#add-tower').bind('click', function(){ game.addActor(); return false; });
+	$('#pause-game').bind('click', function(){ game.pause(); return false; });
+	$('#run-game').bind('click', function(){ game.run(); return false; });
 };
 
-Game.prototype.addSprites = function() {
-	console.log('Game#addSprites');
+Game.prototype.addActors = function() {
 	for (var i=0; i < 10; i++) {
-		this.addSprite();
+		this.addActor();
 	};
 };
 
-Game.prototype.addSprite = function() {
-	console.log('Game#addSprite');
-	this.sprites.push(new Tower(Math.floor(Math.random()*this.width), Math.floor(Math.random()*this.height), 10));
+Game.prototype.addActor = function() {
+	this.actors.push(new Tower(Math.floor(Math.random()*this.width), Math.floor(Math.random()*this.height), 10));
 };
 
 Game.prototype.run = function() {
-	console.log('Game#run');
 	var game = this;
 	this.running = true;
-	function gameLoop(){ 
-		if (game.running) { 
-			game.clear();
-			game.update(); 
-			game.draw(); 
-		};
-	}
-	setInterval(gameLoop, 30);
+	// function gameLoop(){ 
+	// 	if (game.running) { 
+	// 		game.clear();
+	// 		game.update(); 
+	// 		game.draw(); 
+	// 	};
+	// }
+	// setInterval(gameLoop, 30);
+	game.map.draw(this.ctx); 
 };
 
 Game.prototype.update = function() {
-	console.log('Game#update');
-	for (var i=0; i < this.sprites.length; i++) {
-		this.sprites[i].update();
+	for (var i=0; i < this.actors.length; i++) {
+		this.actors[i].update();
 	};
 };
 
 Game.prototype.draw = function() {
-	console.log('Game#draw');
-	for (var i=0; i < this.sprites.length; i++) {
-		this.sprites[i].draw(this.ctx);
+	for (var i=0; i < this.actors.length; i++) {
+		this.actors[i].draw(this.ctx);
 	};
 };
 
 Game.prototype.clear = function() {
-	console.log('Game#clear');
 	this.ctx.clearRect(0, 0, this.width, this.height);
-
 };
 
 Game.prototype.keyCommand = function(command) {
-	console.log('Game#keyCommand');
 	console.log(command);
 };
 
@@ -119,26 +170,25 @@ Game.prototype.pause = function() {
 };
 
 Game.prototype.teardown = function() {
-	console.log('Game#teardown');
 };
 
 // ----------------------------------------------------------------------------
 
 function Background(width, height){
-	this.width = width;
+	this.width  = width;
 	this.height = height;
 	this.radius = radius;
-	this.color = "rgb(200,0,0)";
+	this.color  = "rgb(200,0,0)";
 }
 
 // ----------------------------------------------------------------------------
 
 function Tower(x, y, radius){
-	this.x = x;
-	this.y = y;
+	this.x      = x;
+	this.y      = y;
 	this.radius = radius;
-	this.color = "rgb(200,0,0)";
-	this.oob = false;
+	this.color  = "rgb(200,0,0)";
+	this.oob    = false;
 }
 
 Tower.prototype.update = function() {
@@ -164,13 +214,13 @@ Tower.prototype.getPosition = function() {
 // ----------------------------------------------------------------------------
 
 function Enemy(x, y, radius){
-	this.x = x;
-	this.dx = dx;
-	this.y = y;
-	this.dy = dy;
+	this.x      = x;
+	this.dx     = dx;
+	this.y      = y;
+	this.dy     = dy;
 	this.radius = radius;
-	this.color = "rgb(200,0,0)";
-	this.oob = false;
+	this.color  = "rgb(200,0,0)";
+	this.oob    = false;
 }
 
 Enemy.prototype.update = function() {
