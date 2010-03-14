@@ -8,30 +8,31 @@ function Player(){
 // http://dev.opera.com/articles/view/3d-games-with-canvas-and-raycasting-part/
 
 var map_data = [
-  ['0','0','X','X','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','X','X','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-  ['0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','X','X','X','X','0','0'],
-  ['0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','X','X','X','X','0','0'],
-  ['0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0','X','X','0','0'],
-  ['0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0','X','X','0','0'],
-  ['0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0','X','X','0','0'],
-  ['0','0','X','X','0','0','X','X','X','X','X','X','X','X','X','X','0','0','X','X','0','0'],
-  ['0','0','X','X','0','0','X','X','X','X','X','X','X','X','X','X','0','0','X','X','0','0'],
-  ['0','0','X','X','0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0'],
-  ['0','0','X','X','0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0'],
-  ['0','0','X','X','0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0'],
-  ['0','0','X','X','0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0'],
-  ['0','0','X','X','0','0','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0'],
-  ['0','0','X','X','X','X','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0'],
-  ['0','0','X','X','X','X','X','X','0','0','0','0','0','0','0','0','0','0','X','X','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','X','X','0','0'],
-  ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','X','X','0','0']
+  ['.','X','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'],
+  ['.','X','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'],
+  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','X','X','.'],
+  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+  ['.','X','.','X','X','X','X','X','X','X','X','X','X','X','.','X','.'],
+  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','X','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','X','.']
 ];
 
-function Map(width, height, data){
+var map_path = [
+	[1,1],
+	[1,1]	
+];
+
+function Map(game, data){
+	this.game    = game;
 	this.scale   = 20;
-	this.width   = width; 
-	this.height  = height; 
 	this.cols    = data[0].length; 
 	this.rows    = data.length; 
 	this.terrain = [];
@@ -63,9 +64,8 @@ Map.prototype.draw = function(ctx) {
 	for (var row=0; row < this.rows; row++) {
 		for (var col=0; col < this.cols; col++) {
 			var tile = this.terrain[row][col];
-			if (tile == '0') {
+			if (tile == '.') {
         ctx.fillStyle = "rgb(0,0,0)";
-				// console.log((col * this.scale), (row * this.scale), this.scale);
         ctx.fillRect(  
           col * this.scale,
           row * this.scale,
@@ -87,6 +87,58 @@ Map.prototype.draw = function(ctx) {
 
 // ----------------------------------------------------------------------------
 
+function BottomBar(game){
+	this.game    = game;
+	this.width   = 600; 
+	this.height  = 100; 
+	return this;
+}
+
+BottomBar.prototype.draw = function(ctx) {
+	ctx.fillStyle = "rgb(255,255,255)";
+	ctx.fillRect(  
+		0,
+		360,
+		this.width,
+		this.height
+	);				
+	ctx.strokeStyle = "rgb(0,0,0)";
+	ctx.strokeRect(  
+		0,
+		360,
+		this.width,
+		this.height
+	);				
+};
+
+// ----------------------------------------------------------------------------
+
+function SideBar(game){
+	this.game    = game;
+	this.width   = 200; 
+	this.height  = 450; 
+	return this;
+}
+
+SideBar.prototype.draw = function(ctx) {
+	ctx.fillStyle = "rgb(255,255,255)";
+	ctx.fillRect(  
+		600,
+		0,
+		this.width,
+		this.height
+	);				
+	ctx.strokeStyle = "rgb(0,0,0)";
+	ctx.strokeRect(  
+		600,
+		0,
+		this.width,
+		this.height
+	);				
+};
+
+// ----------------------------------------------------------------------------
+
 function Game(){
 	this.canvas  = null; 
 	this.ctx     = null;
@@ -95,6 +147,7 @@ function Game(){
 	this.actors  = [];
 	this.player  = null;
 	this.map     = null;
+	this.bottom  = null;
 	this.running = false;
 	this.setup();
 	return this;
@@ -103,11 +156,13 @@ function Game(){
 Game.prototype.setup = function() {
 	this.canvas = document.getElementById('canvas'); 
 	if (this.canvas.getContext){ 
-		this.ctx    = this.canvas.getContext('2d');
-		this.width  = this.canvas.width;
-		this.height = this.canvas.height;
-		this.map    = new Map(this.canvas.width, this.canvas.height, map_data);
-		this.player = new Player();
+		this.ctx       = this.canvas.getContext('2d');
+		this.width     = this.canvas.width;
+		this.height    = this.canvas.height;
+		this.map       = new Map(this, map_data);
+		this.bottombar = new BottomBar(this);
+		this.sidebar   = new SideBar(this);
+		this.player    = new Player();
 		this.bindKeys();
 		this.addActors();
 	} else {
@@ -132,12 +187,12 @@ Game.prototype.bindKeys = function() {
 
 Game.prototype.addActors = function() {
 	for (var i=0; i < 10; i++) {
-		this.addActor();
+		this.addActor(i+10);
 	};
 };
 
-Game.prototype.addActor = function() {
-	this.actors.push(new Tower(Math.floor(Math.random()*this.width), Math.floor(Math.random()*this.height), 10));
+Game.prototype.addActor = function(i) {
+	this.actors.push(new Tower(Math.floor(Math.random()*this.width), Math.floor(Math.random()*this.height), i));
 };
 
 Game.prototype.run = function() {
@@ -147,6 +202,8 @@ Game.prototype.run = function() {
 	// 	if (game.running) { 
 			game.clear();
 				game.map.draw(this.ctx); 
+				game.bottombar.draw(this.ctx); 
+				game.sidebar.draw(this.ctx); 
 			game.update(); 
 			game.draw(); 
 	// 	};
