@@ -7,31 +7,34 @@ function Player(){
 // http://dev.opera.com/articles/view/creating-pseudo-3d-games-with-html-5-can-1/
 // http://dev.opera.com/articles/view/3d-games-with-canvas-and-raycasting-part/
 
-var map_data = [
+var map_terrain = [
   ['.','X','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'],
   ['.','X','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'],
   ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','X','X','.'],
   ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
   ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
   ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
-  ['.','X','.','X','X','X','X','X','X','X','X','X','X','X','.','X','.'],
-  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','.','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','X','X','.','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+  ['.','X','.','.','X','X','X','X','X','X','X','X','X','X','.','X','.'],
+  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+  ['.','X','X','X','X','.','.','.','.','.','.','.','.','.','.','X','.'],
   ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','X','.'],
   ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','X','.']
 ];
 
 var map_path = [
+	[1,0],
 	[1,1],
 	[1,1]	
 ];
 
-function Map(game, data){
-	this.game    = game;
+function Map(data, path){
 	this.scale   = 20;
 	this.cols    = data[0].length; 
 	this.rows    = data.length; 
@@ -89,7 +92,7 @@ Map.prototype.draw = function(ctx) {
 
 function BottomBar(game){
 	this.game    = game;
-	this.width   = 600; 
+	this.width   = 800; 
 	this.height  = 100; 
 	return this;
 }
@@ -102,20 +105,13 @@ BottomBar.prototype.draw = function(ctx) {
 		this.width,
 		this.height
 	);				
-	ctx.strokeStyle = "rgb(0,0,0)";
-	ctx.strokeRect(  
-		0,
-		360,
-		this.width,
-		this.height
-	);				
 };
 
 // ----------------------------------------------------------------------------
 
 function SideBar(game){
 	this.game    = game;
-	this.width   = 200; 
+	this.width   = 120; 
 	this.height  = 450; 
 	return this;
 }
@@ -123,18 +119,11 @@ function SideBar(game){
 SideBar.prototype.draw = function(ctx) {
 	ctx.fillStyle = "rgb(255,255,255)";
 	ctx.fillRect(  
-		600,
+		340,
 		0,
 		this.width,
 		this.height
-	);				
-	ctx.strokeStyle = "rgb(0,0,0)";
-	ctx.strokeRect(  
-		600,
-		0,
-		this.width,
-		this.height
-	);				
+	);
 };
 
 // ----------------------------------------------------------------------------
@@ -146,7 +135,8 @@ function Game(){
 	this.height  = null;
 	this.actors  = [];
 	this.player  = null;
-	this.map     = null;
+	this.p1_map  = null;
+	this.p2_map  = null;
 	this.bottom  = null;
 	this.running = false;
 	this.setup();
@@ -159,7 +149,7 @@ Game.prototype.setup = function() {
 		this.ctx       = this.canvas.getContext('2d');
 		this.width     = this.canvas.width;
 		this.height    = this.canvas.height;
-		this.map       = new Map(this, map_data);
+		this.p1_map    = new Map(map_terrain, map_path);
 		this.bottombar = new BottomBar(this);
 		this.sidebar   = new SideBar(this);
 		this.player    = new Player();
@@ -196,12 +186,12 @@ Game.prototype.addActor = function(i) {
 };
 
 Game.prototype.run = function() {
-	var game = this;
-	this.running = true;
+	// var game = this;
+	// this.running = true;
 	// function gameLoop(){ 
 	// 	if (game.running) { 
 			game.clear();
-				game.map.draw(this.ctx); 
+				game.p1_map.draw(this.ctx); 
 				game.bottombar.draw(this.ctx); 
 				game.sidebar.draw(this.ctx); 
 			game.update(); 
