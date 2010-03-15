@@ -24,7 +24,7 @@
 			equal(game.running, false);
 		})
 		.should('have a map', function() {
-			isType(game.map, 'Object');
+			isType(game.p1_map, 'Object');
 		})
 		.should('have actors', function() {
 			isType(game.actors, 'Array');

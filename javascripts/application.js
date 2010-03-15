@@ -8,44 +8,44 @@ function Player(){
 // http://dev.opera.com/articles/view/3d-games-with-canvas-and-raycasting-part/
 
 var map_terrain = [
-  ['.','X','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'],
-  ['.','X','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'],
-  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','X','X','.'],
-  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
-  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
-  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
-  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
-  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
-  ['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
-  ['.','X','.','.','X','X','X','X','X','X','X','X','X','X','.','X','.'],
-  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','X','X','X','X','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','X','.'],
-  ['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','X','.']
+	['.','X','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'],
+	['.','X','.','.','.','.','.','.','.','.','.','.','.','.','.','.','.'],
+	['.','X','.','.','.','.','.','.','.','.','.','.','.','X','X','X','.'],
+	['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+	['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+	['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+	['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+	['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+	['.','X','.','.','.','.','.','.','.','.','.','.','.','X','.','X','.'],
+	['.','X','.','.','X','X','X','X','X','X','X','X','X','X','.','X','.'],
+	['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+	['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+	['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+	['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+	['.','X','.','.','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+	['.','X','X','X','X','.','.','.','.','.','.','.','.','.','.','X','.'],
+	['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','X','.'],
+	['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.','X','.']
 ];
 
 var map_path = [
-	[1,0],
-	[1,1],
-	[1,1]	
+	[1,0],[1,15],[4,15],[4,15],[4,9],[13,9],[13,2],[15,2],[15,17]
 ];
 
-function Map(data, path){
-	this.scale   = 20;
-	this.cols    = data[0].length; 
-	this.rows    = data.length; 
+function Map(offset, data, path){
+	this.scale	 = 20;
+	this.offset	 = offset;
+	this.cols		 = data[0].length; 
+	this.rows		 = data.length; 
+	this.path		 = path;
 	this.terrain = [];
-	this.units   = [];
+	this.units	 = [];
 	for (var row=0; row < this.rows; row++) {
 		this.terrain[row] = new Array(this.cols);
-		this.units[row]   = new Array(this.cols);
+		this.units[row]		= new Array(this.cols);
 		for (var col=0; col < this.cols; col++) {
 			this.terrain[row][col] = data[row][col];
-			this.units[row][col]   = null;
+			this.units[row][col]	 = null;
 		};
 	};
 	return this;
@@ -68,38 +68,47 @@ Map.prototype.draw = function(ctx) {
 		for (var col=0; col < this.cols; col++) {
 			var tile = this.terrain[row][col];
 			if (tile == '.') {
-        ctx.fillStyle = "rgb(0,0,0)";
-        ctx.fillRect(  
-          col * this.scale,
-          row * this.scale,
-          this.scale,
+				ctx.fillStyle = "rgb(0,0,0)";
+				ctx.fillRect(	 
+					(col * this.scale) + this.offset,
+					row * this.scale,
+					this.scale,
 					this.scale
-	      );
+				);
 			} else {
-        ctx.strokeStyle = "rgb(255,255,255)";
-        ctx.strokeRect(  
-          col * this.scale,
-          row * this.scale,
-          this.scale,
+				ctx.strokeStyle = "rgb(255,255,255)";
+				ctx.strokeRect(	 
+					(col * this.scale) + this.offset,
+					row * this.scale,
+					this.scale,
 					this.scale
-	      );				
+				);				
 			};
 		};
+	};
+	for (var pos=0; pos < this.path.length; pos++) {
+		ctx.strokeStyle = "rgb(255,0,0)";
+		ctx.strokeRect(	 
+			(this.path[pos][0] * this.scale) + this.offset,
+			this.path[pos][1] * this.scale,
+			this.scale,
+			this.scale
+		);				
 	};
 };
 
 // ----------------------------------------------------------------------------
 
 function BottomBar(game){
-	this.game    = game;
-	this.width   = 800; 
-	this.height  = 100; 
+	this.game		 = game;
+	this.width	 = 800; 
+	this.height	 = 100; 
 	return this;
 }
 
 BottomBar.prototype.draw = function(ctx) {
 	ctx.fillStyle = "rgb(255,255,255)";
-	ctx.fillRect(  
+	ctx.fillRect(	 
 		0,
 		360,
 		this.width,
@@ -110,15 +119,15 @@ BottomBar.prototype.draw = function(ctx) {
 // ----------------------------------------------------------------------------
 
 function SideBar(game){
-	this.game    = game;
-	this.width   = 120; 
-	this.height  = 450; 
+	this.game		 = game;
+	this.width	 = 120; 
+	this.height	 = 450; 
 	return this;
 }
 
 SideBar.prototype.draw = function(ctx) {
 	ctx.fillStyle = "rgb(255,255,255)";
-	ctx.fillRect(  
+	ctx.fillRect(	 
 		340,
 		0,
 		this.width,
@@ -129,15 +138,15 @@ SideBar.prototype.draw = function(ctx) {
 // ----------------------------------------------------------------------------
 
 function Game(){
-	this.canvas  = null; 
-	this.ctx     = null;
-	this.width   = null;
-	this.height  = null;
-	this.actors  = [];
-	this.player  = null;
-	this.p1_map  = null;
-	this.p2_map  = null;
-	this.bottom  = null;
+	this.canvas	 = null; 
+	this.ctx		 = null;
+	this.width	 = null;
+	this.height	 = null;
+	this.actors	 = [];
+	this.player	 = null;
+	this.p1_map	 = null;
+	this.p2_map	 = null;
+	this.bottom	 = null;
 	this.running = false;
 	this.setup();
 	return this;
@@ -146,13 +155,14 @@ function Game(){
 Game.prototype.setup = function() {
 	this.canvas = document.getElementById('canvas'); 
 	if (this.canvas.getContext){ 
-		this.ctx       = this.canvas.getContext('2d');
-		this.width     = this.canvas.width;
-		this.height    = this.canvas.height;
-		this.p1_map    = new Map(map_terrain, map_path);
+		this.ctx			 = this.canvas.getContext('2d');
+		this.width		 = this.canvas.width;
+		this.height		 = this.canvas.height;
+		this.p1_map		 = new Map(0, map_terrain, map_path);
+		this.p2_map		 = new Map(this.canvas.width/2+60, map_terrain, map_path);
 		this.bottombar = new BottomBar(this);
-		this.sidebar   = new SideBar(this);
-		this.player    = new Player();
+		this.sidebar	 = new SideBar(this);
+		this.player		 = new Player();
 		this.bindKeys();
 		this.addActors();
 	} else {
@@ -189,14 +199,15 @@ Game.prototype.run = function() {
 	// var game = this;
 	// this.running = true;
 	// function gameLoop(){ 
-	// 	if (game.running) { 
+	//	if (game.running) { 
 			game.clear();
 				game.p1_map.draw(this.ctx); 
+				game.p2_map.draw(this.ctx); 
 				game.bottombar.draw(this.ctx); 
 				game.sidebar.draw(this.ctx); 
 			game.update(); 
 			game.draw(); 
-	// 	};
+	//	};
 	// }
 	// setInterval(gameLoop, 30);
 };
@@ -232,27 +243,27 @@ Game.prototype.teardown = function() {
 // ----------------------------------------------------------------------------
 
 function Background(width, height){
-	this.width  = width;
+	this.width	= width;
 	this.height = height;
 	this.radius = radius;
-	this.color  = "rgb(200,0,0)";
+	this.color	= "rgb(200,0,0)";
 }
 
 // ----------------------------------------------------------------------------
 
 function Tower(x, y, radius){
-	this.x      = x;
-	this.y      = y;
+	this.x			= x;
+	this.y			= y;
 	this.radius = radius;
-	this.color  = "rgb(200,0,0)";
-	this.oob    = false;
+	this.color	= "rgb(200,0,0)";
+	this.oob		= false;
 }
 
 Tower.prototype.update = function() {
 };
 
 Tower.prototype.draw = function(ctx) {
-	ctx.fillStyle = this.color;  
+	ctx.fillStyle = this.color;	 
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true);
 	ctx.closePath();
@@ -271,13 +282,13 @@ Tower.prototype.getPosition = function() {
 // ----------------------------------------------------------------------------
 
 function Enemy(x, y, radius){
-	this.x      = x;
-	this.dx     = dx;
-	this.y      = y;
-	this.dy     = dy;
+	this.x			= x;
+	this.dx			= dx;
+	this.y			= y;
+	this.dy			= dy;
 	this.radius = radius;
-	this.color  = "rgb(200,0,0)";
-	this.oob    = false;
+	this.color	= "rgb(200,0,0)";
+	this.oob		= false;
 }
 
 Enemy.prototype.update = function() {
@@ -292,7 +303,7 @@ Enemy.prototype.update = function() {
 };
 
 Enemy.prototype.draw = function(ctx) {
-	ctx.fillStyle = this.color;  
+	ctx.fillStyle = this.color;	 
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true);
 	ctx.closePath();
